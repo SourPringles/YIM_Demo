@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'service/backend_service.dart';
-import 'settings_dialog.dart';
 import 'service/location_service.dart';
+
+import 'views/visualviewpage.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,150 +28,6 @@ class MainApp extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  final BackendService _backendService = BackendService();
-  List<Map<String, String>> _items = [];
-  bool _isFirstLoad = true;
-  //String _connectionStatus = ""; // 연결 상태 메시지
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showSettingsDialog(
-        onClose: () {
-          _fetchInventory();
-        },
-      );
-    });
-  }
-
-  Future<void> _fetchInventory() async {
-    final items = await _backendService.fetchInventory();
-    setState(() {
-      _items = items;
-      _isFirstLoad = false;
-    });
-  }
-
-  void _showSettingsDialog({VoidCallback? onClose}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 주변 여백 클릭으로 닫히지 않도록 설정
-      builder: (BuildContext context) {
-        return SettingsDialog(backendService: _backendService);
-      },
-    ).then((_) {
-      if (onClose != null) onClose();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MainPage'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _fetchInventory,
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => _showSettingsDialog(),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child:
-                _isFirstLoad
-                    ? const Center(child: CircularProgressIndicator())
-                    : (_items.isEmpty
-                        ? const Center(child: Text('No items found'))
-                        : ListView.builder(
-                          itemCount: _items.length,
-                          itemBuilder: (context, index) {
-                            final item = _items[index];
-                            return ListTile(
-                              title: Text(item["nickname"] ?? ""),
-                              subtitle: Text(
-                                "UID: ${item["uuid"] ?? ""}\n"
-                                "Timestamp: ${item["timestamp"] ?? ""}\n"
-                                "Position: (${item["x"]}, ${item["y"]})",
-                              ),
-                              leading: const Icon(Icons.kitchen),
-                              trailing: const Icon(Icons.arrow_forward),
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => LocationPage(
-                                          backendService: _backendService,
-                                          highlightedItem: item,
-                                        ),
-                                  ),
-                                );
-                                _fetchInventory(); // 복귀 후 새로고침
-                              },
-                            );
-                          },
-                        )),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              LocationPage(backendService: _backendService),
-                    ),
-                  );
-                  _fetchInventory(); // 복귀 후 새로고침
-                },
-                child: const Text('물건 위치 보기'),
-              ),
-              ElevatedButton(
-                onPressed: _uploadImage,
-                child: const Text('이미지 업로드'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _uploadImage() async {
-    final result = await _backendService.uploadImage(context);
-    if (!mounted) return; // 위젯이 마운트되어 있는지 확인
-    if (result) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('이미지 업로드 성공')));
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('이미지 업로드 실패')));
-    }
-
-    await _fetchInventory();
   }
 }
 
