@@ -15,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MainPage(),
+      home: const VisualViewPage(),
       builder: (context, child) {
         return Center(
           child: ConstrainedBox(
