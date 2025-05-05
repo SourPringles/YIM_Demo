@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'views/visualviewpage.dart';
+import 'views/listviewpage.dart';
+import 'views/uploadimagepage.dart';
 
 void main() {
   runApp(const MainApp());
@@ -36,11 +38,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   // 페이지 목록
-  final List<Widget> _pages = [
-    const VVP(),
-    const Placeholder(),
-    const Placeholder(),
-  ];
+  final List<Widget> _pages = [const VVP(), const LVP(), const UIP()];
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +69,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List View'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.image),
             label: 'Upload Image',
           ),
         ],

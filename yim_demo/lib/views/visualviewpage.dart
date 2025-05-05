@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../service/visualviewpage_service.dart';
+import '../views/view_utils.dart';
 
 class VVP extends StatefulWidget {
   const VVP({super.key});
@@ -29,70 +30,11 @@ class _VVPState extends State<VVP> {
     });
   }
 
-  void _showItemDetails(Map<String, dynamic> item) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('아이템 정보'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoRow('이름', item['nickname'] ?? 'Unknown'),
-              _buildInfoRow('UUID', item['uuid'] ?? 'Unknown'),
-              _buildInfoRow('시간', item['timestamp'] ?? 'Unknown'),
-              _buildInfoRow('X 좌표', item['x']?.toString() ?? 'Unknown'),
-              _buildInfoRow('Y 좌표', item['y']?.toString() ?? 'Unknown'),
-              // 이미지가 있는 경우 이미지 표시
-              if (item['uuid'] != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Image.network(
-                    'http://localhost:5000/getImage?uuid=${item['uuid']}',
-                    height: 150,
-                    width: 150,
-                    fit: BoxFit.contain,
-                    errorBuilder:
-                        (context, error, stackTrace) => Text('이미지를 불러올 수 없습니다'),
-                  ),
-                ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('닫기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 60,
-            child: Text(
-              '$label:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Visual View Page'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadStorage),
         ],
@@ -129,7 +71,11 @@ class _VVPState extends State<VVP> {
                               top: y,
                               child: GestureDetector(
                                 onTap: () {
-                                  _showItemDetails(item);
+                                  DialogUtils.showItemDetails(
+                                    context,
+                                    item,
+                                    onClose: _loadStorage,
+                                  );
                                 },
                                 child: ItemBox(
                                   nickname: item["nickname"] ?? "Unknown",
