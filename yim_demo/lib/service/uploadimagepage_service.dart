@@ -1,16 +1,17 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'config_service.dart';
 
 class UIPService {
-  // 서버 설정
-  final String baseUrl = "http://localhost:5000";
+  final ConfigService _configService = ConfigService();
 
   // 이미지 업로드 함수
   Future<Map<String, dynamic>> uploadImage(
     File imageFile,
     String nickname,
   ) async {
+    final baseUrl = await _configService.getBaseUrl();
     final url = Uri.parse('$baseUrl/updateStorage');
 
     // 멀티파트 요청 생성

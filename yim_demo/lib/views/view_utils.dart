@@ -17,10 +17,10 @@ class DialogUtils {
 
     showGeneralDialog(
       context: context,
-      barrierColor: Colors.transparent,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: Duration.zero, // 애니메이션 시간을 0으로 설정
+      //barrierColor: Colors.transparent,
+      //barrierDismissible: true,
+      //barrierLabel: '',
+      //transitionDuration: Duration.zero, // 애니메이션 시간을 0으로 설정
       pageBuilder: (context, animation1, animation2) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -88,9 +88,9 @@ class DialogUtils {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    if (onClose != null) onClose(); // 닫을 때 콜백 실행
+                    //if (onClose != null) onClose(); // 닫을 때 콜백 실행
                   },
-                  child: Text('닫기'), // "취소"에서 "닫기"로 변경
+                  child: Text('닫기'),
                 ),
                 // 저장 버튼
                 ElevatedButton(

@@ -1,39 +1,16 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'config_service.dart';
 
 class VVPService {
-  bool isLocalHost;
-  String serverAddress;
-  String port;
+  final ConfigService _configService = ConfigService();
 
-  VVPService({
-    this.isLocalHost = true, // 기본값 설정
-    this.serverAddress = "",
-    this.port = "",
-  });
-
-  // 서버 설정 변경
-  void updateServerSettings({
-    required bool isLocalHost,
-    required String serverAddress,
-    required String port,
-  }) {
-    this.isLocalHost = isLocalHost;
-    this.serverAddress = serverAddress;
-    this.port = port;
-  }
+  VVPService();
 
   // 서버에서 물건 데이터 가져오기
   Future<List<Map<String, dynamic>>> loadStorage() async {
-    Uri url;
-
-    //if (isLocalHost) {
-    //  url = Uri.parse("http://localhost:5000/getStorage");
-    //} else {
-    //  url = Uri.parse("http://$serverAddress:$port/getStorage");
-    //}
-
-    url = Uri.parse("http://localhost:5000/getStorage");
+    final baseUrl = await _configService.getBaseUrl();
+    final url = Uri.parse("$baseUrl/getStorage");
 
     try {
       final response = await http.get(url);

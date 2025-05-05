@@ -4,6 +4,8 @@ import 'views/visualviewpage.dart';
 import 'views/listviewpage.dart';
 import 'views/uploadimagepage.dart';
 
+import 'views/settingspage.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // 설정 페이지 열기
+              showSettingsDialog(context);
             },
           ),
         ],
