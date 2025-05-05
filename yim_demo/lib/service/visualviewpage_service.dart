@@ -1,10 +1,16 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class MainPageService {
-  bool isLocalHost = true;
-  String serverAddress = "";
-  String port = "";
+class VVPService {
+  bool isLocalHost;
+  String serverAddress;
+  String port;
+
+  VVPService({
+    this.isLocalHost = true, // 기본값 설정
+    this.serverAddress = "",
+    this.port = "",
+  });
 
   // 서버 설정 변경
   void updateServerSettings({
@@ -17,13 +23,17 @@ class MainPageService {
     this.port = port;
   }
 
-  Future<List<Map<String, String>>> fetchStorage() async {
+  // 서버에서 물건 데이터 가져오기
+  Future<List<Map<String, dynamic>>> loadStorage() async {
     Uri url;
-    if (isLocalHost) {
-      url = Uri.parse("http://localhost:5000/getStorage");
-    } else {
-      url = Uri.parse("http://$serverAddress:$port/getStorage");
-    }
+
+    //if (isLocalHost) {
+    //  url = Uri.parse("http://localhost:5000/getStorage");
+    //} else {
+    //  url = Uri.parse("http://$serverAddress:$port/getStorage");
+    //}
+
+    url = Uri.parse("http://localhost:5000/getStorage");
 
     try {
       final response = await http.get(url);
