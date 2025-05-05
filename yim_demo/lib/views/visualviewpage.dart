@@ -44,45 +44,118 @@ class _VVPState extends State<VVP> {
               ? const Center(child: CircularProgressIndicator())
               : LayoutBuilder(
                 builder: (context, constraints) {
-                  final containerWidth = 600.0;
-                  final containerHeight = 1000.0;
+                  // 원본 컨테이너의 비율 계산
+                  final originalWidth = 600.0;
+                  final originalHeight = 1000.0;
+                  final aspectRatio = originalHeight / originalWidth;
 
-                  return SizedBox(
-                    width: containerWidth,
-                    height: containerHeight,
-                    //color: Colors.grey.shade200, // 경계 시각화
-                    child: Stack(
-                      children:
-                          _items.map((item) {
-                            // 아이템의 크기 (예상)
-                            const itemWidth = 100.0;
-                            const itemHeight = 35.0;
+                  // 내부 여백 설정
+                  final horizontalPadding = 8.0; // 여백 줄임
+                  final verticalPadding = 12.0;
 
-                            // 원래 위치 가져오기
-                            double x = double.tryParse(item["x"] ?? "0") ?? 0;
-                            double y = double.tryParse(item["y"] ?? "0") ?? 0;
+                  // 화면 크기에 맞는 컨테이너 크기 계산
+                  final maxWidth = constraints.maxWidth;
+                  final maxHeight = constraints.maxHeight;
 
-                            // 경계 검사 및 위치 제한
-                            x = x.clamp(0, containerWidth - itemWidth);
-                            y = y.clamp(0, containerHeight - itemHeight);
+                  // 너비 기준으로 계산한 높이
+                  final heightFromWidth = maxWidth * aspectRatio;
 
-                            return Positioned(
-                              left: x,
-                              top: y,
-                              child: GestureDetector(
-                                onTap: () {
-                                  DialogUtils.showItemDetails(
-                                    context,
-                                    item,
-                                    onClose: _loadStorage,
+                  // 높이가 화면을 넘어가는지 확인
+                  double containerWidth, containerHeight;
+
+                  if (heightFromWidth <= maxHeight) {
+                    // 너비에 맞추고 높이 비율 유지
+                    containerWidth = maxWidth * 0.95; // 약간 더 축소
+                    containerHeight = containerWidth * aspectRatio;
+                  } else {
+                    // 높이에 맞추고 너비 비율 유지
+                    containerHeight = maxHeight * 0.95; // 약간 더 축소
+                    containerWidth = containerHeight / aspectRatio;
+                  }
+
+                  // 내부 컨텐츠 영역 계산
+                  final contentWidth = containerWidth - (horizontalPadding * 2);
+                  final contentHeight = containerHeight - (verticalPadding * 2);
+
+                  // 비율 계산 (내용물 크기 / 원본 크기)
+                  final widthRatio = contentWidth / originalWidth;
+                  final heightRatio = contentHeight / originalHeight;
+
+                  return Center(
+                    child: Container(
+                      width: containerWidth,
+                      height: containerHeight,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey.shade400,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: horizontalPadding,
+                          vertical: verticalPadding,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1), // 좌표 영역 시각화
+                            border: Border.all(
+                              color: Colors.red.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Stack(
+                            children:
+                                _items.map((item) {
+                                  // 아이템 크기와 위치 계산 후 경계 제한
+                                  // 아이템 크기는 비율에 맞게 조정
+                                  double itemWidth =
+                                      (double.tryParse(
+                                            item["width"] ?? "100",
+                                          ) ??
+                                          100) *
+                                      widthRatio;
+                                  double itemHeight =
+                                      (double.tryParse(
+                                            item["height"] ?? "35",
+                                          ) ??
+                                          35) *
+                                      heightRatio;
+
+                                  // 원래 위치에 비율 적용
+                                  double x =
+                                      (double.tryParse(item["x"] ?? "0") ?? 0) *
+                                      widthRatio;
+                                  double y =
+                                      (double.tryParse(item["y"] ?? "0") ?? 0) *
+                                      heightRatio;
+
+                                  // 경계 검사 (아이템이 컨테이너를 벗어나지 않도록)
+                                  x = x.clamp(0, containerWidth - itemWidth);
+                                  y = y.clamp(0, containerHeight - itemHeight);
+
+                                  return Positioned(
+                                    left: x,
+                                    top: y,
+                                    width: itemWidth,
+                                    height: itemHeight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        DialogUtils.showItemDetails(
+                                          context,
+                                          item,
+                                          onClose: _loadStorage,
+                                        );
+                                      },
+                                      child: ItemBox(
+                                        nickname: item["nickname"] ?? "Unknown",
+                                      ),
+                                    ),
                                   );
-                                },
-                                child: ItemBox(
-                                  nickname: item["nickname"] ?? "Unknown",
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                                }).toList(),
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },
