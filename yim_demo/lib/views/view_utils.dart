@@ -17,10 +17,6 @@ class DialogUtils {
 
     showGeneralDialog(
       context: context,
-      //barrierColor: Colors.transparent,
-      //barrierDismissible: true,
-      //barrierLabel: '',
-      //transitionDuration: Duration.zero, // 애니메이션 시간을 0으로 설정
       pageBuilder: (context, animation1, animation2) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -51,7 +47,7 @@ class DialogUtils {
                     Padding(
                       padding: const EdgeInsets.only(top: 12.0),
                       child: Image.network(
-                        'http://localhost:5000/getImage?uuid=${item['uuid']}',
+                        'http://localhost:5000/getImage/${item['uuid']}',
                         height: 150,
                         width: 150,
                         fit: BoxFit.contain,

@@ -97,7 +97,7 @@ class _UIPState extends State<UIP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('이미지 업로드')),
+      //appBar: AppBar(title: const Text('이미지 업로드')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -34,7 +34,7 @@ class _VVPState extends State<VVP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Visual View Page'),
+        //title: const Text('Visual View Page'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadStorage),
         ],
@@ -44,11 +44,6 @@ class _VVPState extends State<VVP> {
               ? const Center(child: CircularProgressIndicator())
               : LayoutBuilder(
                 builder: (context, constraints) {
-                  // 원본 컨테이너의 비율 계산
-                  final originalWidth = 600.0;
-                  final originalHeight = 1000.0;
-                  final aspectRatio = originalHeight / originalWidth;
-
                   // 내부 여백 설정
                   final horizontalPadding = 8.0; // 여백 줄임
                   final verticalPadding = 12.0;
@@ -57,29 +52,13 @@ class _VVPState extends State<VVP> {
                   final maxWidth = constraints.maxWidth;
                   final maxHeight = constraints.maxHeight;
 
-                  // 너비 기준으로 계산한 높이
-                  final heightFromWidth = maxWidth * aspectRatio;
-
-                  // 높이가 화면을 넘어가는지 확인
-                  double containerWidth, containerHeight;
-
-                  if (heightFromWidth <= maxHeight) {
-                    // 너비에 맞추고 높이 비율 유지
-                    containerWidth = maxWidth * 0.95; // 약간 더 축소
-                    containerHeight = containerWidth * aspectRatio;
-                  } else {
-                    // 높이에 맞추고 너비 비율 유지
-                    containerHeight = maxHeight * 0.95; // 약간 더 축소
-                    containerWidth = containerHeight / aspectRatio;
-                  }
-
                   // 내부 컨텐츠 영역 계산
-                  final contentWidth = containerWidth - (horizontalPadding * 2);
-                  final contentHeight = containerHeight - (verticalPadding * 2);
+                  final contentWidth = maxWidth - (horizontalPadding * 2);
+                  final contentHeight = maxHeight - (verticalPadding * 2);
 
-                  // 비율 계산 (내용물 크기 / 원본 크기)
-                  final widthRatio = contentWidth / originalWidth;
-                  final heightRatio = contentHeight / originalHeight;
+                  // 최종 컨테이너 크기
+                  final containerWidth = contentWidth;
+                  final containerHeight = contentHeight;
 
                   return Center(
                     child: Container(
@@ -113,22 +92,18 @@ class _VVPState extends State<VVP> {
                                       (double.tryParse(
                                             item["width"] ?? "100",
                                           ) ??
-                                          100) *
-                                      widthRatio;
+                                          100);
                                   double itemHeight =
                                       (double.tryParse(
                                             item["height"] ?? "35",
                                           ) ??
-                                          35) *
-                                      heightRatio;
+                                          35);
 
                                   // 원래 위치에 비율 적용
                                   double x =
-                                      (double.tryParse(item["x"] ?? "0") ?? 0) *
-                                      widthRatio;
+                                      (double.tryParse(item["x"] ?? "0") ?? 0);
                                   double y =
-                                      (double.tryParse(item["y"] ?? "0") ?? 0) *
-                                      heightRatio;
+                                      (double.tryParse(item["y"] ?? "0") ?? 0);
 
                                   // 경계 검사 (아이템이 컨테이너를 벗어나지 않도록)
                                   x = x.clamp(0, containerWidth - itemWidth);
@@ -173,8 +148,8 @@ class ItemBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90, // 가로 90
-      height: 30, // 세로 30
+      //width: 90, // 가로 90
+      //height: 30, // 세로 30
       decoration: BoxDecoration(
         color: Colors.blue,
         shape: BoxShape.rectangle, // 사각형 형태

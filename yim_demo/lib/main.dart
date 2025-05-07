@@ -18,11 +18,29 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: const HomePage(),
       builder: (context, child) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600, maxHeight: 1200),
-            child: ClipRect(child: child),
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // 최소 너비 300px, 최대 너비 600px로 제한
+            final width =
+                constraints.maxWidth > 600
+                    ? 600.0
+                    : constraints.maxWidth < 300
+                    ? 300.0
+                    : constraints.maxWidth;
+            final height = width * 2; // 1:2 비율 유지
+
+            return Center(
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: width,
+                  minHeight: height,
+                  maxWidth: width,
+                  maxHeight: height,
+                ),
+                child: ClipRect(child: child),
+              ),
+            );
+          },
         );
       },
     );

@@ -34,7 +34,7 @@ class _LVPState extends State<LVP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List View Page'),
+        //title: const Text('List View Page'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadStorage),
         ],
@@ -54,7 +54,7 @@ class _LVPState extends State<LVP> {
                               ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: Image.network(
-                                  'http://localhost:5000/getImage?uuid=${item['uuid']}',
+                                  'http://localhost:5000/getImage/${item['uuid']}',
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
