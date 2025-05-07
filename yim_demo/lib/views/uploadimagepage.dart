@@ -70,10 +70,7 @@ class _UIPState extends State<UIP> {
     });
 
     try {
-      final result = await _uipService.uploadImage(
-        _selectedImage!,
-        "NEW ITEM", // 기본값으로 고정
-      );
+      final result = await _uipService.uploadImage(_selectedImage!);
 
       setState(() {
         _isUploading = false;

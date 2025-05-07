@@ -7,10 +7,7 @@ class UIPService {
   final ConfigService _configService = ConfigService();
 
   // 이미지 업로드 함수
-  Future<Map<String, dynamic>> uploadImage(
-    File imageFile,
-    String nickname,
-  ) async {
+  Future<Map<String, dynamic>> uploadImage(File imageFile) async {
     final baseUrl = await _configService.getBaseUrl();
     final url = Uri.parse('$baseUrl/updateStorage');
 
@@ -30,7 +27,6 @@ class UIPService {
 
     // 요청에 파일 및 닉네임 추가
     request.files.add(multipartFile);
-    request.fields['nickname'] = nickname;
 
     // 요청 전송 및 응답 대기
     var streamedResponse = await request.send();
