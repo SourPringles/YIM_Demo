@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../service/service_utils.dart';
 
 class DialogUtils {
@@ -156,5 +157,15 @@ class DialogUtils {
         ],
       ),
     );
+  }
+}
+
+// 위젯 마운트 여부 체크
+mixin SafeState<T extends StatefulWidget> on State<T> {
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 }

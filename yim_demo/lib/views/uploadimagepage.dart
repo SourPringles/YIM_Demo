@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../service/uploadimagepage_service.dart';
+import '../views/view_utils.dart';
 
 class UIP extends StatefulWidget {
   const UIP({super.key});
@@ -10,7 +12,7 @@ class UIP extends StatefulWidget {
   State<UIP> createState() => _UIPState();
 }
 
-class _UIPState extends State<UIP> {
+class _UIPState extends State<UIP> with SafeState<UIP> {
   final UIPService _uipService = UIPService();
 
   File? _selectedImage;
