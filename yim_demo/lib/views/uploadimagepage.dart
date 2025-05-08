@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../service/uploadimagepage_service.dart';
-import '../views/view_utils.dart';
+import 'view_utils.dart';
 
 class UIP extends StatefulWidget {
   const UIP({super.key});

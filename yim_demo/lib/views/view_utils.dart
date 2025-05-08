@@ -6,15 +6,22 @@ class DialogUtils {
   static void showItemDetails(
     BuildContext context,
     Map<String, dynamic> item, {
-    Function? onClose, // 콜백 함수 추가
+    Function? onClose,
   }) {
-    // 닉네임 편집을 위한 컨트롤러
     final TextEditingController nicknameController = TextEditingController(
       text: item['nickname'] ?? 'Unknown',
     );
-    // 상태 관리 변수
     bool isSaving = false;
     String? resultMessage;
+    bool hasCallback = false; // 콜백 실행 여부 추적
+
+    // 콜백 실행 함수
+    void executeCallback() {
+      if (!hasCallback && onClose != null) {
+        hasCallback = true;
+        onClose();
+      }
+    }
 
     showGeneralDialog(
       context: context,
@@ -85,7 +92,6 @@ class DialogUtils {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    //if (onClose != null) onClose(); // 닫을 때 콜백 실행
                   },
                   child: Text('닫기'),
                 ),
@@ -113,14 +119,14 @@ class DialogUtils {
                                 isSaving = false;
                                 resultMessage = "저장 성공!";
                               });
+
+                              executeCallback(); // 저장 성공시에만 콜백 실행
                             } catch (e) {
                               setState(() {
                                 isSaving = false;
                                 resultMessage = "저장 실패: $e";
                               });
                             }
-                            // 저장 완료 후
-                            if (onClose != null) onClose(); // 저장 후에도 콜백 실행
                           },
                   child:
                       isSaving
@@ -136,7 +142,9 @@ class DialogUtils {
           },
         );
       },
-    ).then((_) => nicknameController.dispose());
+    ).then((_) {
+      nicknameController.dispose();
+    });
   }
 
   // 정보 행 위젯

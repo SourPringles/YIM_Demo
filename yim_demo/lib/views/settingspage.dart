@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../service/config_service.dart';
-import '../views/view_utils.dart';
+import '../service/settingspage_service.dart';
+import 'view_utils.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({super.key});
@@ -13,12 +13,15 @@ class SettingsDialog extends StatefulWidget {
 class _SettingsDialogState extends State<SettingsDialog>
     with SafeState<SettingsDialog> {
   // 병합된 서비스 사용
-  final _ConfigService = ConfigService();
+  final _spService = SPService();
+
   bool _useLocalhost = true;
   final _serverAddressController = TextEditingController();
   final _portController = TextEditingController();
+
   bool _isConnectionTested = false;
   bool _isConnectionSuccessful = false;
+
   bool _isLoading = false;
 
   @override
@@ -28,7 +31,7 @@ class _SettingsDialogState extends State<SettingsDialog>
   }
 
   Future<void> _loadSettings() async {
-    final settings = await _ConfigService.getServerSettings();
+    final settings = await _spService.getServerSettings();
     setState(() {
       _useLocalhost = settings['useLocalhost'];
       _serverAddressController.text = settings['serverAddress'];
@@ -42,7 +45,7 @@ class _SettingsDialogState extends State<SettingsDialog>
       _isConnectionTested = false;
     });
 
-    final result = await _ConfigService.testConnection(
+    final result = await _spService.testConnection(
       useLocalhost: _useLocalhost,
       serverAddress: _serverAddressController.text,
       serverPort: _portController.text,
@@ -55,7 +58,7 @@ class _SettingsDialogState extends State<SettingsDialog>
     });
 
     if (result) {
-      await _ConfigService.saveServerSettings(
+      await _spService.saveServerSettings(
         useLocalhost: _useLocalhost,
         serverAddress: _serverAddressController.text,
         serverPort: _portController.text,

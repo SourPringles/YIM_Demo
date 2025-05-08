@@ -1,45 +1,31 @@
+import 'config_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingsService {
-  static const String USE_LOCALHOST_KEY = 'use_localhost';
-  static const String SERVER_ADDRESS_KEY = 'server_address';
-  static const String SERVER_PORT_KEY = 'server_port';
+class SPService {
+  final ConfigService _configService = ConfigService();
 
-  // 서버 설정 가져오기
+  SPService();
+
+  // 서버 설정을 가져오는 메서드
   Future<Map<String, dynamic>> getServerSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    return {
-      'useLocalhost': prefs.getBool(USE_LOCALHOST_KEY) ?? true,
-      'serverAddress': prefs.getString(SERVER_ADDRESS_KEY) ?? '192.168.0.1',
-      'serverPort': prefs.getString(SERVER_PORT_KEY) ?? '5000',
-    };
+    final settings = await _configService.getServerSettings();
+    return settings;
   }
 
-  // 서버 설정 저장하기
-  Future<bool> saveServerSettings({
-    required bool useLocalhost,
-    required String serverAddress,
-    required String serverPort,
+  // testConnection 메서드
+  Future<bool> testConnection({
+    bool? useLocalhost,
+    String? serverAddress,
+    String? serverPort,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    final settings = await getServerSettings();
 
-    await prefs.setBool(USE_LOCALHOST_KEY, useLocalhost);
-    await prefs.setString(SERVER_ADDRESS_KEY, serverAddress);
-    await prefs.setString(SERVER_PORT_KEY, serverPort);
-
-    return true;
-  }
-
-  // 서버 연결 테스트
-  Future<bool> testServerConnection({
-    required bool useLocalhost,
-    required String serverAddress,
-    required String serverPort,
-  }) async {
-    final host = useLocalhost ? 'localhost' : serverAddress;
-    final url = Uri.parse('http://$host:$serverPort');
+    final host =
+        useLocalhost ?? settings['useLocalhost']
+            ? 'localhost'
+            : (serverAddress ?? settings['serverAddress']);
+    final port = serverPort ?? settings['serverPort'];
+    final url = Uri.parse('http://$host:$port');
 
     try {
       final response = await http
@@ -53,5 +39,18 @@ class SettingsService {
     } catch (e) {
       return false;
     }
+  }
+
+  // saveServerSettings 메서드
+  Future<bool> saveServerSettings({
+    required bool useLocalhost,
+    required String serverAddress,
+    required String serverPort,
+  }) async {
+    return await _configService.saveServerSettings(
+      useLocalhost: useLocalhost,
+      serverAddress: serverAddress,
+      serverPort: serverPort,
+    );
   }
 }

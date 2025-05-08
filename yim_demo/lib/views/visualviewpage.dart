@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../service/visualviewpage_service.dart';
-import '../views/view_utils.dart';
+import 'view_utils.dart';
 
 class VVP extends StatefulWidget {
   const VVP({super.key});
