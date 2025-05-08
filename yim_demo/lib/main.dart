@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'views/visualviewpage.dart';
 import 'views/listviewpage.dart';
 import 'views/uploadimagepage.dart';
-
 import 'views/settingspage.dart';
 
 void main() {

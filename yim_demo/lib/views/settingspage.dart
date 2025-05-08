@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+
 import '../service/config_service.dart';
+import '../views/view_utils.dart';
 
 class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({Key? key}) : super(key: key);
+  const SettingsDialog({super.key});
 
   @override
   State<SettingsDialog> createState() => _SettingsDialogState();
 }
 
-class _SettingsDialogState extends State<SettingsDialog> {
+class _SettingsDialogState extends State<SettingsDialog>
+    with SafeState<SettingsDialog> {
   // 병합된 서비스 사용
   final _ConfigService = ConfigService();
   bool _useLocalhost = true;
@@ -185,16 +188,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
         ),
       ),
     );
-  }
-}
-
-// 기존의 SettingsPage는 유지 (다른 곳에서 사용하는 경우가 있을 수 있으므로)
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const SettingsDialog();
   }
 }
 

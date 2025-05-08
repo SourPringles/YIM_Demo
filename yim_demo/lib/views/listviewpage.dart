@@ -10,7 +10,7 @@ class LVP extends StatefulWidget {
   State<LVP> createState() => _LVPState();
 }
 
-class _LVPState extends State<LVP> {
+class _LVPState extends State<LVP> with SafeState<LVP> {
   final LVPService _lvpService = LVPService();
 
   List<dynamic> _items = [];
