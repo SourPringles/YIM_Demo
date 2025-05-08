@@ -74,7 +74,7 @@ class _LVPState extends State<LVP> with SafeState<LVP> {
                           () => DialogUtils.showItemDetails(
                             context,
                             item,
-                            onClose: _loadStorage,
+                            onSaved: _loadStorage,
                           ),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16),
                     ),

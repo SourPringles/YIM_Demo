@@ -119,7 +119,7 @@ class _VVPState extends State<VVP> with SafeState<VVP> {
                                         DialogUtils.showItemDetails(
                                           context,
                                           item,
-                                          onClose: _loadStorage,
+                                          onSaved: _loadStorage,
                                         );
                                       },
                                       child: ItemBox(
