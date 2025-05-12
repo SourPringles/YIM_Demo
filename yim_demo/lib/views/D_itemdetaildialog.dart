@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../service/service_utils.dart';
+import '../service/D_itemdetaildialog_service.dart';
 
 class ItemDetailsDialog extends StatefulWidget {
   final Map<String, dynamic> item;
@@ -16,6 +15,7 @@ class _ItemDetailsDialogState extends State<ItemDetailsDialog> {
   late final TextEditingController nicknameController;
   bool isSaving = false;
   String? resultMessage;
+  String? _imageUrl; // 이미지 URL을 저장할 변수
 
   @override
   void initState() {
@@ -23,12 +23,17 @@ class _ItemDetailsDialogState extends State<ItemDetailsDialog> {
     nicknameController = TextEditingController(
       text: widget.item['nickname'] ?? 'Unknown',
     );
+    _loadImageUrl(); // 이미지 URL 로드
   }
 
-  @override
-  void dispose() {
-    nicknameController.dispose();
-    super.dispose();
+  // 이미지 URL을 로드하는 메서드 추가
+  Future<void> _loadImageUrl() async {
+    if (widget.item['uuid'] != null) {
+      final url = await ServiceUtils.getImageUrl(widget.item['uuid']);
+      setState(() {
+        _imageUrl = url;
+      });
+    }
   }
 
   @override
@@ -59,14 +64,18 @@ class _ItemDetailsDialogState extends State<ItemDetailsDialog> {
           if (widget.item['uuid'] != null)
             Padding(
               padding: const EdgeInsets.only(top: 12.0),
-              child: Image.network(
-                'http://localhost:5000/getImage/${widget.item['uuid']}',
-                height: 150,
-                width: 150,
-                fit: BoxFit.contain,
-                errorBuilder:
-                    (context, error, stackTrace) => Text('이미지를 불러올 수 없습니다'),
-              ),
+              child:
+                  _imageUrl != null
+                      ? Image.network(
+                        _imageUrl!,
+                        height: 150,
+                        width: 150,
+                        fit: BoxFit.contain,
+                        errorBuilder:
+                            (context, error, stackTrace) =>
+                                Text('이미지를 불러올 수 없습니다'),
+                      )
+                      : const Center(child: CircularProgressIndicator()),
             ),
 
           // 저장 결과 메시지

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'views/visualviewpage.dart';
-import 'views/listviewpage.dart';
-import 'views/uploadimagepage.dart';
-import 'views/settingspage.dart';
+import 'views/P_visualviewpage.dart';
+import 'views/P_listviewpage.dart';
+import 'views/P_uploadimagepage.dart';
+import 'views/D_settingsdialog.dart';
 
 void main() {
   try {

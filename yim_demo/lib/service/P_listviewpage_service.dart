@@ -1,20 +1,23 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'config_service.dart';
+import 'http_service.dart';
 
 class LVPService {
   final ConfigService _configService = ConfigService();
+  final HttpService _httpService = HttpService();
 
   LVPService();
 
+  // 이미지 URL 가져오기
+  Future<String> getImageUrl(String uuid) async {
+    final baseUrl = await _configService.getBaseUrl();
+    return '$baseUrl/getImage/$uuid';
+  }
+
   // 서버에서 물건 데이터 가져오기
   Future<List<Map<String, dynamic>>> loadStorage() async {
-    final baseUrl = await _configService.getBaseUrl();
-    final url = Uri.parse("$baseUrl/getStorage");
-
     try {
-      final response = await http.get(url);
+      final response = await _httpService.get('getStorage');
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
 

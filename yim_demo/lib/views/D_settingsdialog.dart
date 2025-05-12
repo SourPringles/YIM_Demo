@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../service/settingspage_service.dart';
-import 'view_utils.dart';
+import '../service/D_settingsdialog_service.dart';
+import 'D_itemdetaildialog.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({super.key});
@@ -45,28 +45,40 @@ class _SettingsDialogState extends State<SettingsDialog>
       _isConnectionTested = false;
     });
 
-    final result = await _spService.testConnection(
-      useLocalhost: _useLocalhost,
-      serverAddress: _serverAddressController.text,
-      serverPort: _portController.text,
-    );
-
-    setState(() {
-      _isLoading = false;
-      _isConnectionTested = true;
-      _isConnectionSuccessful = result;
-    });
-
-    if (result) {
-      await _spService.saveServerSettings(
+    try {
+      final result = await _spService.testConnection(
         useLocalhost: _useLocalhost,
         serverAddress: _serverAddressController.text,
         serverPort: _portController.text,
       );
 
+      setState(() {
+        _isLoading = false;
+        _isConnectionTested = true;
+        _isConnectionSuccessful = result;
+      });
+
+      if (result) {
+        await _spService.saveServerSettings(
+          useLocalhost: _useLocalhost,
+          serverAddress: _serverAddressController.text,
+          serverPort: _portController.text,
+        );
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('서버 설정이 저장되었습니다.')));
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _isConnectionTested = true;
+        _isConnectionSuccessful = false;
+      });
+
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('서버 설정이 저장되었습니다.')));
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 

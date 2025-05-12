@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../service/listviewpage_service.dart';
-import 'view_utils.dart';
+import '../service/P_listviewpage_service.dart';
+import 'D_itemdetaildialog.dart';
 
 class LVP extends StatefulWidget {
   const LVP({super.key});
@@ -51,21 +51,40 @@ class _LVPState extends State<LVP> with SafeState<LVP> {
                     child: ListTile(
                       leading:
                           item['uuid'] != null
-                              ? ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: Image.network(
-                                  'http://localhost:5000/getImage/${item['uuid']}',
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        width: 50,
-                                        height: 50,
-                                        color: Colors.grey[300],
-                                        child: Icon(Icons.image_not_supported),
+                              ? FutureBuilder<String>(
+                                future: _lvpService.getImageUrl(item['uuid']),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
                                       ),
-                                ),
+                                    );
+                                  }
+
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: Image.network(
+                                      snapshot.data ?? '',
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                width: 50,
+                                                height: 50,
+                                                color: Colors.grey[300],
+                                                child: Icon(
+                                                  Icons.image_not_supported,
+                                                ),
+                                              ),
+                                    ),
+                                  );
+                                },
                               )
                               : null,
                       title: Text(item['nickname'] ?? 'Unknown'),
