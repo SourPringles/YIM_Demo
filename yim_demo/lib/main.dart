@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'views/visualviewpage.dart';
-import 'views/listviewpage.dart';
-import 'views/uploadimagepage.dart';
-import 'views/settingspage.dart';
+import 'views/P_visualviewpage.dart';
+import 'views/P_listviewpage.dart';
+import 'views/P_uploadimagepage.dart';
+import 'views/D_settingsdialog.dart';
 
 void main() {
-  runApp(const MainApp());
+  try {
+    runApp(const MainApp());
+  } catch (e) {
+    print('Error: $e');
+  }
 }
 
 class MainApp extends StatelessWidget {
@@ -19,24 +23,25 @@ class MainApp extends StatelessWidget {
       builder: (context, child) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            // 최소 너비 300px, 최대 너비 600px로 제한
-            final width =
-                constraints.maxWidth > 600
-                    ? 600.0
-                    : constraints.maxWidth < 300
-                    ? 300.0
-                    : constraints.maxWidth;
-            final height = width * 2; // 1:2 비율 유지
+            // 화면 크기의 90%로 제한
+            final width = constraints.maxWidth * 0.9;
+            final height = constraints.maxHeight * 0.9;
+
+            // 최소/최대 크기 제한
+            final constrainedWidth = width.clamp(300.0, 600.0);
+            final constrainedHeight = height.clamp(600.0, 1200.0);
 
             return Center(
               child: Container(
                 constraints: BoxConstraints(
-                  minWidth: width,
-                  minHeight: height,
-                  maxWidth: width,
-                  maxHeight: height,
+                  minWidth: constrainedWidth,
+                  maxWidth: constrainedWidth,
+                  minHeight: constrainedHeight,
+                  maxHeight: constrainedHeight,
                 ),
-                child: ClipRect(child: child),
+                child: ClipRect(
+                  child: child ?? const SizedBox(), // null 안전성 추가
+                ),
               ),
             );
           },

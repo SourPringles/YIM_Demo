@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../service/uploadimagepage_service.dart';
-import '../views/view_utils.dart';
+import '../service/P_uploadimagepage_service.dart';
+import 'D_itemdetaildialog.dart';
 
 class UIP extends StatefulWidget {
   const UIP({super.key});
