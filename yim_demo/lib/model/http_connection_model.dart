@@ -106,7 +106,9 @@ class HttpConnection {
   Future<Image?> getImage(String endpoint) async {
     try {
       final url = getBaseUrl();
-      final response = await http.get(Uri.parse('$url/$endpoint'));
+      final response = await http
+          .get(Uri.parse('$url/$endpoint'))
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final bytes = response.bodyBytes;
