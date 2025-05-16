@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
-import '../provider/commonDataProvider.dart';
+import '../provider/common_data_provider.dart';
 
 class ItemVisualView extends StatelessWidget {
   const ItemVisualView({super.key});
@@ -28,7 +28,7 @@ class ItemVisualView extends StatelessWidget {
                   }
 
                   return FutureBuilder<Size>(
-                    future: _getImageSize(bgImage!.image),
+                    future: _getImageSize(bgImage.image),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return const Center(child: CircularProgressIndicator());
@@ -74,28 +74,22 @@ class ItemVisualView extends StatelessWidget {
                           ),
 
                           // 아이템 박스들 - 이미지 기준으로 위치 조정
-                          ...items
-                              .map(
-                                (item) => Positioned(
-                                  // 왼쪽으로 10px, 위쪽으로 10px 이동 (10px씩 빼줌)
-                                  left:
-                                      imageStartX +
-                                      ((double.tryParse(item['x'] ?? '0') ??
-                                              0.0) *
-                                          scale) -
-                                      45,
-                                  top:
-                                      imageStartY +
-                                      ((double.tryParse(item['y'] ?? '0') ??
-                                              0.0) *
-                                          scale) -
-                                      10,
-                                  child: ItemBox(
-                                    nickname: item['nickname'] ?? '',
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                          ...items.map(
+                            (item) => Positioned(
+                              // 왼쪽으로 10px, 위쪽으로 10px 이동 (10px씩 빼줌)
+                              left:
+                                  imageStartX +
+                                  ((double.tryParse(item['x'] ?? '0') ?? 0.0) *
+                                      scale) -
+                                  45,
+                              top:
+                                  imageStartY +
+                                  ((double.tryParse(item['y'] ?? '0') ?? 0.0) *
+                                      scale) -
+                                  10,
+                              child: ItemBox(nickname: item['nickname'] ?? ''),
+                            ),
+                          ),
                         ],
                       );
                     },

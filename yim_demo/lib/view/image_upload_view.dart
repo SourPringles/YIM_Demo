@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/commonDataProvider.dart';
+import '../provider/common_data_provider.dart';
 
 class ImageUploadView extends StatefulWidget {
   const ImageUploadView({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/commonDataProvider.dart';
+import '../provider/common_data_provider.dart';
 
 class TestView extends StatelessWidget {
   const TestView({super.key});

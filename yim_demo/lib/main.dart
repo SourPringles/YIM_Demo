@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'view/mainView.dart';
-import 'provider/commonDataProvider.dart';
+import 'view/main_view.dart';
+import 'provider/common_data_provider.dart';
 
 void main() {
   try {

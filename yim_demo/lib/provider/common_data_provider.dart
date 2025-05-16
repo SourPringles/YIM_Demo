@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../model/httpConnection.dart';
-import '../model/storageData.dart';
-import '../model/configSetting.dart';
+import '../model/http_connection_model.dart';
+import '../model/storage_data_model.dart';
+import '../model/config_setting_model.dart';
 
 class CommonDataProvider extends ChangeNotifier {
   HttpConnection httpConnection = HttpConnection();

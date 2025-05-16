@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/commonDataProvider.dart';
-import 'testView.dart';
-import 'itemVisualView.dart';
-import 'itemListView.dart';
-import 'imageUploadView.dart';
+import '../provider/common_data_provider.dart';
+import 'test_view.dart';
+import 'item_visual_view.dart';
+import 'item_list_view.dart';
+import 'image_upload_view.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
