@@ -1,20 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
-import '../service/P_uploadimagepage_service.dart';
-import 'D_itemdetaildialog.dart';
+import '../provider/commonDataProvider.dart';
 
-class UIP extends StatefulWidget {
-  const UIP({super.key});
+class ImageUploadView extends StatefulWidget {
+  const ImageUploadView({super.key});
 
   @override
-  State<UIP> createState() => _UIPState();
+  State<ImageUploadView> createState() => _ImageUploadViewState();
 }
 
-class _UIPState extends State<UIP> with SafeState<UIP> {
-  final UIPService _uipService = UIPService();
-
+class _ImageUploadViewState extends State<ImageUploadView> {
   File? _selectedImage;
   bool _isUploading = false;
   String? _uploadResult;
@@ -43,16 +41,18 @@ class _UIPState extends State<UIP> with SafeState<UIP> {
       });
 
       // 사용자에게 알림 표시
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            source == ImageSource.camera
-                ? '카메라를 사용할 수 없습니다'
-                : '갤러리에 접근할 수 없습니다',
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              source == ImageSource.camera
+                  ? '카메라를 사용할 수 없습니다'
+                  : '갤러리에 접근할 수 없습니다',
+            ),
+            backgroundColor: Colors.red,
           ),
-          backgroundColor: Colors.red,
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -72,13 +72,27 @@ class _UIPState extends State<UIP> with SafeState<UIP> {
     });
 
     try {
-      final result = await _uipService.uploadImage(_selectedImage!);
+      // CommonDataProvider의 HttpConnection 사용
+      final provider = Provider.of<CommonDataProvider>(context, listen: false);
 
-      setState(() {
-        _isUploading = false;
-        _uploadResult = "업로드 성공!";
-        _hasError = false;
-      });
+      // 파일 업로드 요청
+      final response = await provider.httpConnection.postFile(
+        'updateStorage',
+        _selectedImage!,
+      );
+
+      // 업로드 성공 시 데이터 갱신
+      if (response.statusCode == 200) {
+        provider.refreshData();
+
+        setState(() {
+          _isUploading = false;
+          _uploadResult = "업로드 성공!";
+          _hasError = false;
+        });
+      } else {
+        throw Exception('업로드 실패: ${response.statusCode}');
+      }
     } catch (e) {
       setState(() {
         _isUploading = false;
@@ -89,14 +103,8 @@ class _UIPState extends State<UIP> with SafeState<UIP> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(title: const Text('이미지 업로드')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
