@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class StorageData {
   List<dynamic> _storageItems = [];
+  // [{uuid: '', nickname: '', timestamp: '', x: '', y: ''}]
   List<dynamic> _tempItems = [];
+  // [{uuid: '', nickname: '', timestamp: ''}]
   Image? _backgroundImage;
 
   List<dynamic> get storageItems => _storageItems;

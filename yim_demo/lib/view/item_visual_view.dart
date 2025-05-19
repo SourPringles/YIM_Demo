@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../provider/common_data_provider.dart';
+import '../model/compare_date_model.dart';
+import 'item_detail_dialog.dart';
 
 class ItemVisualView extends StatelessWidget {
   const ItemVisualView({super.key});
@@ -74,9 +76,11 @@ class ItemVisualView extends StatelessWidget {
                           ),
 
                           // 아이템 박스들 - 이미지 기준으로 위치 조정
-                          ...items.map(
-                            (item) => Positioned(
-                              // 왼쪽으로 10px, 위쪽으로 10px 이동 (10px씩 빼줌)
+                          ...items.map((item) {
+                            // 콘솔에 item 출력
+                            // print("Item data: ${item['timestamp']}");
+
+                            return Positioned(
                               left:
                                   imageStartX +
                                   ((double.tryParse(item['x'] ?? '0') ?? 0.0) *
@@ -87,9 +91,14 @@ class ItemVisualView extends StatelessWidget {
                                   ((double.tryParse(item['y'] ?? '0') ?? 0.0) *
                                       scale) -
                                   10,
-                              child: ItemBox(nickname: item['nickname'] ?? ''),
-                            ),
-                          ),
+                              child: ItemBox(
+                                nickname: item['nickname'] ?? '',
+                                timestmap:
+                                    item['timestamp'] ?? "${DateTime.now()}",
+                                itemData: item, // 전체 아이템 데이터 전달
+                              ),
+                            );
+                          }),
                         ],
                       );
                     },
@@ -116,33 +125,52 @@ class ItemVisualView extends StatelessWidget {
   }
 }
 
-// 아이템박스 위젯
+// 아이템박스 위젯 WIP
 class ItemBox extends StatelessWidget {
   final String nickname;
+  final String timestmap;
+  final Map<String, dynamic> itemData; // 추가: 전체 아이템 데이터
 
-  const ItemBox({super.key, required this.nickname});
+  const ItemBox({
+    super.key,
+    required this.nickname,
+    required this.timestmap,
+    required this.itemData, // 아이템 데이터 매개변수 추가
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 90, // 가로 90
-      height: 30, // 세로 30
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        shape: BoxShape.rectangle, // 사각형 형태
-        border: Border.all(
-          color: Colors.black, // 테두리 색상
-          width: 1, // 테두리 두께
-        ),
-      ),
-      child: Center(
-        child: Text(
-          nickname,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12, // 텍스트 크기 조정
+    return GestureDetector(
+      onTap: () {
+        // 클릭 시 다이얼로그 표시
+        showItemDetailDialog(context, itemData);
+      },
+      child: Container(
+        //width: 90, // 가로 90
+        //height: 30, // 세로 30
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.rectangle, // 사각형 형태
+          border: Border.all(
+            color: Colors.black, // 테두리 색상
+            width: 1, // 테두리 두께
           ),
-          textAlign: TextAlign.center,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              nickname,
+              style: const TextStyle(color: Colors.black, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              getDateDiffDays(timestmap),
+              style: const TextStyle(color: Colors.black, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

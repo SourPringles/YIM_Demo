@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/common_data_provider.dart';
+import 'item_detail_dialog.dart'; // 다이얼로그 import 추가
 
 class ItemListView extends StatelessWidget {
   const ItemListView({super.key});
@@ -27,10 +28,7 @@ class ItemListView extends StatelessWidget {
                     ),
                     onTap: () {
                       // 아이템 상세 다이얼로그 표시
-                      //showDialog(
-                      //  context: context,
-                      //  builder: (context) => ItemDetailDialog(item: item),
-                      //);
+                      showItemDetailDialog(context, item);
                     },
                   );
                 },
