@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/common_data_provider.dart';
+import '../model/compare_date_model.dart';
 
 class ItemDetailDialog extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -39,12 +40,12 @@ class ItemDetailDialog extends StatelessWidget {
             const SizedBox(height: 10),
 
             // 아이템 정보 표시
-            _buildInfoRow('UUID', item['uuid'] ?? '없음'),
-            _buildInfoRow('닉네임', item['nickname'] ?? '없음'),
+            //_buildInfoRow('UUID', item['uuid'] ?? '없음'),
+            _buildInfoRow('이름', item['nickname'] ?? '없음'),
             _buildInfoRow('타임스탬프', item['timestamp'] ?? '없음'),
-            _buildInfoRow('X 좌표', item['x'] ?? '없음'),
-            _buildInfoRow('Y 좌표', item['y'] ?? '없음'),
-
+            _buildInfoRow('마지막 접근', getDateDiffDays(item['timestamp'])),
+            //_buildInfoRow('X 좌표', item['x'] ?? '없음'),
+            //_buildInfoRow('Y 좌표', item['y'] ?? '없음'),
             const SizedBox(height: 20),
 
             // 아이템 이미지 - FutureBuilder 사용

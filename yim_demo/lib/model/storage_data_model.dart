@@ -22,7 +22,12 @@ class StorageData {
   }
 
   void setBackgroundImage(Image? image) {
-    _backgroundImage = image;
+    if (image == null) {
+      _backgroundImage = null;
+      return;
+    } else {
+      _backgroundImage = image;
+    }
   }
 
   void clearStorageData() {

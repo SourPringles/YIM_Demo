@@ -80,6 +80,7 @@ class _ImageUploadViewState extends State<ImageUploadView> {
         'updateStorage',
         _selectedImage!,
       );
+      print(response);
 
       // 업로드 성공 시 데이터 갱신
       if (response.statusCode == 200) {
