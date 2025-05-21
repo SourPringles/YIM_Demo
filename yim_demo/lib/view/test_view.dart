@@ -45,7 +45,7 @@ class _TestViewState extends State<TestView> {
 
   @override
   Widget build(BuildContext context) {
-    final commonData = Provider.of<CommonDataProvider>(context, listen: false);
+    //final commonData = Provider.of<CommonDataProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Debug Page')),

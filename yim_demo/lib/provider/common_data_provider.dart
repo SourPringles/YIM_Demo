@@ -66,7 +66,7 @@ class CommonDataProvider extends ChangeNotifier {
 
   bool changeNickname(String uuid, String nickname) {
     try {
-      httpConnection.get('rename/$uuid/$nickname');
+      httpConnection.get('updateNickname/$uuid/$nickname');
       notifyListeners();
       return true;
     } catch (e) {
