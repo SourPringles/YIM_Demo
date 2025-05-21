@@ -74,4 +74,9 @@ class CommonDataProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  void resetAll() {
+    httpConnection.get('reset');
+    notifyListeners();
+  }
 }

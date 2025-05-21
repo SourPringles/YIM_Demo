@@ -9,7 +9,7 @@ class TestView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Test Viewer')),
+      appBar: AppBar(title: const Text('Debug Page')),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
@@ -81,6 +81,13 @@ class TestView extends StatelessWidget {
                   );
                 },
                 child: const Text("Windows/localhostFalse"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CommonDataProvider>().resetAll();
+                  context.read<CommonDataProvider>().refreshData();
+                },
+                child: const Text("RESET"),
               ),
             ],
           ),
