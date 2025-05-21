@@ -3,15 +3,37 @@ import 'package:provider/provider.dart';
 import '../provider/common_data_provider.dart';
 import '../model/compare_date_model.dart';
 
-class ItemDetailDialog extends StatelessWidget {
+class ItemDetailDialog extends StatefulWidget {
   final Map<String, dynamic> item;
 
   const ItemDetailDialog({super.key, required this.item});
 
   @override
+  State<ItemDetailDialog> createState() => _ItemDetailDialogState();
+}
+
+class _ItemDetailDialogState extends State<ItemDetailDialog> {
+  late TextEditingController _nameController;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: widget.item['nickname'] ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final commonData = Provider.of<CommonDataProvider>(context, listen: false);
-    final uuid = item['uuid'] ?? '';
+    final uuid = widget.item['uuid'] ?? '';
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -39,13 +61,64 @@ class ItemDetailDialog extends StatelessWidget {
             const Divider(thickness: 1),
             const SizedBox(height: 10),
 
-            // 아이템 정보 표시
-            //_buildInfoRow('UUID', item['uuid'] ?? '없음'),
-            _buildInfoRow('이름', item['nickname'] ?? '없음'),
-            _buildInfoRow('타임스탬프', item['timestamp'] ?? '없음'),
-            _buildInfoRow('마지막 접근', getDateDiffDays(item['timestamp'])),
-            //_buildInfoRow('X 좌표', item['x'] ?? '없음'),
-            //_buildInfoRow('Y 좌표', item['y'] ?? '없음'),
+            // 이름 수정 가능한 필드
+            Row(
+              children: [
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    '이름:',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child:
+                      _isEditing
+                          ? TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              border: OutlineInputBorder(),
+                            ),
+                          )
+                          : Text(_nameController.text),
+                ),
+                IconButton(
+                  icon: Icon(_isEditing ? Icons.check : Icons.edit),
+                  onPressed: () {
+                    if (_isEditing) {
+                      // 이름 변경 저장 로직 추가
+                      // 서버에 변경 요청 또는 로컬 데이터 업데이트 구현 필요
+                      try {
+                        commonData.changeNickname(uuid, _nameController.text);
+                      } catch (e) {
+                        print('Error changing nickname: $e');
+                      }
+                      widget.item['nickname'] = _nameController.text;
+
+                      // 데이터 갱신 (실제 구현에서는 서버 API 호출 필요)
+                      // commonData.refreshData();
+
+                      setState(() {
+                        _isEditing = false;
+                      });
+                    } else {
+                      setState(() {
+                        _isEditing = true;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+
+            // 나머지 기존 정보 표시
+            _buildInfoRow('타임스탬프', widget.item['timestamp'] ?? '없음'),
+            _buildInfoRow('마지막 접근', getDateDiffDays(widget.item['timestamp'])),
             const SizedBox(height: 20),
 
             // 아이템 이미지 - FutureBuilder 사용

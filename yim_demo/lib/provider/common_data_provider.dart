@@ -63,4 +63,15 @@ class CommonDataProvider extends ChangeNotifier {
   bool getIsLocalhost() => configSetting.isLocalhost;
   String getServerUrl() => configSetting.url;
   String getServerPort() => configSetting.port;
+
+  bool changeNickname(String uuid, String nickname) {
+    try {
+      httpConnection.get('rename/$uuid/$nickname');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print('Error changing nickname: $e');
+      return false;
+    }
+  }
 }

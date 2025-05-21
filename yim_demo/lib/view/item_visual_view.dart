@@ -85,7 +85,7 @@ class ItemVisualView extends StatelessWidget {
                                   imageStartX +
                                   ((double.tryParse(item['x'] ?? '0') ?? 0.0) *
                                       scale) -
-                                  45,
+                                  30,
                               top:
                                   imageStartY +
                                   ((double.tryParse(item['y'] ?? '0') ?? 0.0) *
