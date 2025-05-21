@@ -43,6 +43,30 @@ class _TestViewState extends State<TestView> {
     super.dispose();
   }
 
+  // 버튼 클릭 시 로딩 다이얼로그를 표시하는 함수
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 사용자가 바깥을 터치해도 닫히지 않음
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("서버에 연결 중..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // HTTP 요청 후 로딩 다이얼로그를 닫는 함수
+  void _hideLoadingDialog(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final commonData = Provider.of<CommonDataProvider>(context, listen: false);
@@ -138,14 +162,21 @@ class _TestViewState extends State<TestView> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        onPressed: () {
-                          context
+                        onPressed: () async {
+                          _showLoadingDialog(context);
+
+                          // 비동기 작업 수행
+                          await context
                               .read<CommonDataProvider>()
                               .changeHttpConnection(
                                 isLocalhost,
                                 ipController.text,
                                 portController.text,
                               );
+
+                          // 작업 완료 후 로딩 다이얼로그 닫기
+                          _hideLoadingDialog(context);
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -205,16 +236,20 @@ class _TestViewState extends State<TestView> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: () {
-                      context.read<CommonDataProvider>().refreshData();
+                    onPressed: () async {
+                      _showLoadingDialog(context);
+                      await context.read<CommonDataProvider>().refreshData();
+                      _hideLoadingDialog(context);
                     },
                     icon: const Icon(Icons.refresh),
                     label: const Text("새로고침"),
                   ),
                   ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      _showLoadingDialog(context);
                       context.read<CommonDataProvider>().resetAll();
-                      context.read<CommonDataProvider>().refreshData();
+                      await context.read<CommonDataProvider>().refreshData();
+                      _hideLoadingDialog(context);
                     },
                     icon: const Icon(Icons.delete),
                     label: const Text("RESET"),
@@ -229,17 +264,20 @@ class _TestViewState extends State<TestView> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        context.read<CommonDataProvider>().changeHttpConnection(
-                          false,
-                          '10.0.2.2',
-                          '5000',
-                        );
+                      onPressed: () async {
+                        _showLoadingDialog(context);
+
+                        await context
+                            .read<CommonDataProvider>()
+                            .changeHttpConnection(false, '10.0.2.2', '5000');
+
                         setState(() {
                           ipController.text = '10.0.2.2';
                           portController.text = '5000';
                           isLocalhost = false;
                         });
+
+                        _hideLoadingDialog(context);
                       },
                       child: const Text("Android"),
                     ),

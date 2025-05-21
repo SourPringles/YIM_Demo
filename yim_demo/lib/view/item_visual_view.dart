@@ -12,22 +12,35 @@ class ItemVisualView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final commonData = Provider.of<CommonDataProvider>(context);
-    final items = commonData.getStorageItems();
     final bgImage = commonData.getBackgroundImage();
-    final isLoading = items.isEmpty && bgImage == null;
 
     return Scaffold(
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : LayoutBuilder(
-                builder: (context, constraints) {
-                  double screenWidth = constraints.maxWidth;
-                  double screenHeight = constraints.maxHeight;
+      body: FutureBuilder<List<dynamic>>(
+        future: commonData.getStorageItems(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final items = snapshot.data!;
+          final isLoading = items.isEmpty && bgImage == null;
 
-                  if (bgImage == null) {
+          if (isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              double screenWidth = constraints.maxWidth;
+              double screenHeight = constraints.maxHeight;
+
+              return FutureBuilder<Image?>(
+                future: commonData.getBackgroundImage(),
+                builder: (context, bgImageSnapshot) {
+                  if (!bgImageSnapshot.hasData ||
+                      bgImageSnapshot.data == null) {
                     return Center(child: Text('이미지를 불러올 수 없습니다.'));
                   }
+                  final bgImage = bgImageSnapshot.data!;
 
                   return FutureBuilder<Size>(
                     future: _getImageSize(bgImage.image),
@@ -104,7 +117,11 @@ class ItemVisualView extends StatelessWidget {
                     },
                   );
                 },
-              ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

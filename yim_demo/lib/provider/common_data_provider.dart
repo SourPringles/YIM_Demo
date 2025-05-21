@@ -25,7 +25,11 @@ class CommonDataProvider extends ChangeNotifier {
     refreshData(); // 데이터 새로고침
   }
 
-  void changeHttpConnection(bool isLocalhost, String url, String port) async {
+  Future<void> changeHttpConnection(
+    bool isLocalhost,
+    String url,
+    String port,
+  ) async {
     httpConnection.setLocalhost(isLocalhost);
     httpConnection.setUrl(url);
     httpConnection.setPort(port);
@@ -37,7 +41,7 @@ class CommonDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void refreshData() async {
+  Future<void> refreshData() async {
     try {
       storageData.setStorageItems(await httpConnection.getStorage());
       storageData.setTempItems(await httpConnection.getTemp());
@@ -51,11 +55,11 @@ class CommonDataProvider extends ChangeNotifier {
     }
   }
 
-  List<dynamic> getStorageItems() {
+  Future<List<dynamic>> getStorageItems() async {
     return storageData.storageItems;
   }
 
-  Image? getBackgroundImage() {
+  Future<Image?> getBackgroundImage() async {
     return storageData.backgroundImage;
   }
 
@@ -64,7 +68,7 @@ class CommonDataProvider extends ChangeNotifier {
   String getServerUrl() => configSetting.url;
   String getServerPort() => configSetting.port;
 
-  bool changeNickname(String uuid, String nickname) {
+  Future<bool> changeNickname(String uuid, String nickname) async {
     try {
       httpConnection.get('updateNickname/$uuid/$nickname');
       notifyListeners();

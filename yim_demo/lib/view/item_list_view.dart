@@ -10,29 +10,36 @@ class ItemListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final commonData = Provider.of<CommonDataProvider>(context);
-    final items = commonData.getStorageItems();
-    final isLoading = items.isEmpty;
 
     return Scaffold(
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return ListTile(
-                    title: Text(item['nickname'] ?? '이름 없음'),
-                    subtitle: Text(
-                      '좌표: (${item['x'] ?? 0}, ${item['y'] ?? 0})',
-                    ),
-                    onTap: () {
-                      // 아이템 상세 다이얼로그 표시
-                      showItemDetailDialog(context, item);
-                    },
-                  );
-                },
-              ),
+      body: FutureBuilder<List<dynamic>>(
+        future: commonData.getStorageItems(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('에러 발생: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('아이템이 없습니다.'));
+          } else {
+            final items = snapshot.data!;
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return ListTile(
+                  title: Text(item['nickname'] ?? '이름 없음'),
+                  subtitle: Text('좌표: (${item['x'] ?? 0}, ${item['y'] ?? 0})'),
+                  onTap: () {
+                    // 아이템 상세 다이얼로그 표시
+                    showItemDetailDialog(context, item);
+                  },
+                );
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }
