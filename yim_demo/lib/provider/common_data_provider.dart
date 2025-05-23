@@ -37,7 +37,7 @@ class CommonDataProvider extends ChangeNotifier {
     await configSetting.setServerConfig(isLocalhost, url, port);
 
     storageData.clearStorageData(); // 기존 데이터 초기화
-    refreshData();
+    //refreshData();
     notifyListeners();
   }
 

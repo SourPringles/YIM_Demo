@@ -18,6 +18,31 @@ class _ImageUploadViewState extends State<ImageUploadView> {
   String? _uploadResult;
   bool _hasError = false;
 
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 사용자가 바깥을 터치해도 닫히지 않음
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            //crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("이미지 업로드 중..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // HTTP 요청 후 로딩 다이얼로그를 닫는 함수
+  void _hideLoadingDialog(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   // 이미지 선택 함수
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -74,12 +99,15 @@ class _ImageUploadViewState extends State<ImageUploadView> {
     try {
       // CommonDataProvider의 HttpConnection 사용
       final provider = Provider.of<CommonDataProvider>(context, listen: false);
+      _showLoadingDialog(context);
 
       // 파일 업로드 요청
       final response = await provider.httpConnection.postFile(
         'updateStorage',
         _selectedImage!,
       );
+
+      _hideLoadingDialog(context);
       print(response);
 
       // 업로드 성공 시 데이터 갱신

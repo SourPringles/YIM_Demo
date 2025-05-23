@@ -51,6 +51,7 @@ class _TestViewState extends State<TestView> {
       builder: (BuildContext context) {
         return const AlertDialog(
           content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(),
               SizedBox(width: 20),
@@ -174,6 +175,10 @@ class _TestViewState extends State<TestView> {
                                 portController.text,
                               );
 
+                          await context
+                              .read<CommonDataProvider>()
+                              .refreshData();
+
                           // 작업 완료 후 로딩 다이얼로그 닫기
                           _hideLoadingDialog(context);
 
@@ -265,8 +270,6 @@ class _TestViewState extends State<TestView> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        _showLoadingDialog(context);
-
                         await context
                             .read<CommonDataProvider>()
                             .changeHttpConnection(false, '10.0.2.2', '5000');
@@ -276,8 +279,6 @@ class _TestViewState extends State<TestView> {
                           portController.text = '5000';
                           isLocalhost = false;
                         });
-
-                        _hideLoadingDialog(context);
                       },
                       child: const Text("Android"),
                     ),

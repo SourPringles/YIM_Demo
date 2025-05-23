@@ -36,7 +36,9 @@ class HttpConnection {
 
   Future<http.Response> get(String endpoint) async {
     final url = getBaseUrl();
-    return await http.get(Uri.parse('$url/$endpoint'));
+    return await http
+        .get(Uri.parse('$url/$endpoint'))
+        .timeout(const Duration(seconds: 5));
   }
 
   Future<http.StreamedResponse> postFile(String endpoint, File file) async {
@@ -46,7 +48,8 @@ class HttpConnection {
     var request = http.MultipartRequest('POST', url);
     request.files.add(await http.MultipartFile.fromPath('source', file.path));
 
-    return await request.send();
+    return await request.send().timeout(const Duration(seconds: 5));
+    ;
   }
 
   Future<List<Map<String, dynamic>>> getStorage() async {
@@ -106,9 +109,7 @@ class HttpConnection {
   Future<Image?> getImage(String endpoint) async {
     try {
       final url = getBaseUrl();
-      final response = await http
-          .get(Uri.parse('$url/$endpoint'))
-          .timeout(const Duration(seconds: 10));
+      final response = await http.get(Uri.parse('$url/$endpoint'));
 
       if (response.statusCode == 200) {
         final bytes = response.bodyBytes;
