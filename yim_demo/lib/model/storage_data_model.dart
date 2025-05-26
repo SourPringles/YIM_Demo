@@ -35,26 +35,4 @@ class StorageData {
     _tempItems = [];
     _backgroundImage = null;
   }
-
-  List<Map<String, dynamic>> getAbandonedItems(Duration threshold) {
-    final now = DateTime.now();
-    List<Map<String, dynamic>> abandonedItems = [];
-
-    for (var item in _storageItems) {
-      if (item is Map && item.containsKey('timestamp')) {
-        try {
-          final DateTime itemDate = DateTime.parse(item['timestamp']);
-          final difference = now.difference(itemDate);
-
-          if (difference >= threshold) {
-            abandonedItems.add(Map<String, dynamic>.from(item));
-          }
-        } catch (e) {
-          print('날짜 파싱 오류: $e');
-        }
-      }
-    }
-
-    return abandonedItems;
-  }
 }
