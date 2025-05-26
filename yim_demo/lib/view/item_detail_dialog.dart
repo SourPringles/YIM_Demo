@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../provider/common_data_provider.dart';
 import '../model/compare_date_model.dart';
+import '../theme/component_styles.dart'; // 테마 스타일 임포트
 
 class ItemDetailDialog extends StatefulWidget {
   final Map<String, dynamic> item;
@@ -34,12 +36,13 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
   Widget build(BuildContext context) {
     final commonData = Provider.of<CommonDataProvider>(context, listen: false);
     final uuid = widget.item['uuid'] ?? '';
+    final theme = Theme.of(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: ComponentStyles.dialogShape, // 분리된 스타일 사용
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,18 +51,22 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '아이템 세부 정보',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
             const Divider(thickness: 1),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
 
             // 이름 수정 가능한 필드
             Row(
@@ -68,7 +75,10 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
                   width: 90,
                   child: Text(
                     '이름:',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
                   ),
                 ),
                 Expanded(
@@ -78,30 +88,41 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
                             controller: _nameController,
                             decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 8,
-                                horizontal: 8,
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 12,
                               ),
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: theme.primaryColor,
+                                  width: 2,
+                                ),
+                              ),
                             ),
                           )
-                          : Text(_nameController.text),
+                          : Text(
+                            _nameController.text,
+                            style: theme.textTheme.bodyLarge,
+                          ),
                 ),
                 IconButton(
-                  icon: Icon(_isEditing ? Icons.check : Icons.edit),
+                  icon: Icon(
+                    _isEditing ? Icons.check : Icons.edit,
+                    color: theme.primaryColor,
+                  ),
                   onPressed: () {
                     if (_isEditing) {
                       // 이름 변경 저장 로직 추가
-                      // 서버에 변경 요청 또는 로컬 데이터 업데이트 구현 필요
                       try {
                         commonData.changeNickname(uuid, _nameController.text);
                       } catch (e) {
                         print('Error changing nickname: $e');
                       }
                       widget.item['nickname'] = _nameController.text;
-
-                      // 데이터 갱신 (실제 구현에서는 서버 API 호출 필요)
-                      // commonData.refreshData();
 
                       setState(() {
                         _isEditing = false;
@@ -119,7 +140,7 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
             // 나머지 기존 정보 표시
             _buildInfoRow('타임스탬프', widget.item['timestamp'] ?? '없음'),
             _buildInfoRow('마지막 접근', getDateDiffDays(widget.item['timestamp'])),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // 아이템 이미지 - FutureBuilder 사용
             FutureBuilder<Image?>(
@@ -130,37 +151,62 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
                     width: MediaQuery.of(context).size.width * 0.6,
                     height: MediaQuery.of(context).size.width * 0.6,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child:
                         snapshot.connectionState == ConnectionState.waiting
-                            ? const Center(child: CircularProgressIndicator())
+                            ? Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  theme.primaryColor,
+                                ),
+                              ),
+                            )
                             : snapshot.hasData && snapshot.data != null
                             ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
                               child: Image(
                                 image: snapshot.data!.image,
-                                fit: BoxFit.contain, // 이미지 비율을 유지하면서 컨테이너에 맞춤
+                                fit: BoxFit.contain,
                                 width: double.infinity,
                                 height: double.infinity,
                               ),
                             )
-                            : const Center(child: Text('이미지를 불러올 수 없습니다.')),
+                            : Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.image_not_supported_outlined,
+                                    size: 48,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    '이미지를 불러올 수 없습니다',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            ),
                   ),
                 );
               },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // 확인 버튼
             Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text('확인'),
+              child: SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text('확인'),
                 ),
               ),
             ),
@@ -172,7 +218,7 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -180,10 +226,15 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
             width: 90,
             child: Text(
               '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
             ),
           ),
-          Expanded(child: Text(value)),
+          Expanded(
+            child: Text(value, style: TextStyle(color: Colors.grey[800])),
+          ),
         ],
       ),
     );

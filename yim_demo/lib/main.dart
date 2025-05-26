@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'view/main_view.dart';
 import 'provider/common_data_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   try {
@@ -19,7 +20,11 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CommonDataProvider(),
-      child: const MaterialApp(home: MainView()),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MainView(),
+        theme: AppTheme.tossTheme, // Toss 스타일 테마 적용
+      ),
     );
   }
 }

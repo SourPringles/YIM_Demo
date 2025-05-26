@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/common_data_provider.dart';
+import '../theme/component_styles.dart'; // 스타일 임포트
 
 class ImageUploadView extends StatefulWidget {
   const ImageUploadView({super.key});
@@ -21,16 +22,19 @@ class _ImageUploadViewState extends State<ImageUploadView> {
   void _showLoadingDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false, // 사용자가 바깥을 터치해도 닫히지 않음
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return const AlertDialog(
-          content: Row(
+        return AlertDialog(
+          shape: ComponentStyles.dialogShape, // 분리된 스타일 사용
+          content: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            //crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
+              CircularProgressIndicator(color: Color(0xFF0064FF)),
               SizedBox(width: 20),
-              Text("이미지 업로드 중..."),
+              Text(
+                "이미지 업로드 중...",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
             ],
           ),
         );
@@ -38,12 +42,10 @@ class _ImageUploadViewState extends State<ImageUploadView> {
     );
   }
 
-  // HTTP 요청 후 로딩 다이얼로그를 닫는 함수
   void _hideLoadingDialog(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
   }
 
-  // 이미지 선택 함수
   Future<void> _pickImage(ImageSource source) async {
     try {
       final picker = ImagePicker();
@@ -56,7 +58,6 @@ class _ImageUploadViewState extends State<ImageUploadView> {
         });
       }
     } catch (e) {
-      // 카메라 접근 실패 시 처리
       setState(() {
         _uploadResult =
             source == ImageSource.camera
@@ -65,7 +66,6 @@ class _ImageUploadViewState extends State<ImageUploadView> {
         _hasError = true;
       });
 
-      // 사용자에게 알림 표시
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -74,14 +74,17 @@ class _ImageUploadViewState extends State<ImageUploadView> {
                   ? '카메라를 사용할 수 없습니다'
                   : '갤러리에 접근할 수 없습니다',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.red[700],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
     }
   }
 
-  // 이미지 업로드 함수
   Future<void> _uploadImage() async {
     if (_selectedImage == null) {
       setState(() {
@@ -97,20 +100,16 @@ class _ImageUploadViewState extends State<ImageUploadView> {
     });
 
     try {
-      // CommonDataProvider의 HttpConnection 사용
       final provider = Provider.of<CommonDataProvider>(context, listen: false);
       _showLoadingDialog(context);
 
-      // 파일 업로드 요청
       final response = await provider.httpConnection.postFile(
         'updateStorage',
         _selectedImage!,
       );
 
       _hideLoadingDialog(context);
-      print(response);
 
-      // 업로드 성공 시 데이터 갱신
       if (response.statusCode == 200) {
         provider.refreshData();
 
@@ -133,78 +132,150 @@ class _ImageUploadViewState extends State<ImageUploadView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 이미지 선택 버튼들
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.gallery),
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('갤러리에서 선택'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.camera),
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('카메라로 촬영'),
-                ),
-              ],
+            // 상단 타이틀
+            Text(
+              '이미지 업로드',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
+            Text(
+              '이미지를 선택하고 업로드 해보세요',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 32),
 
-            // 선택한 이미지 미리보기
+            // 이미지 선택 영역
             Container(
               height: 300,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration:
+                  ComponentStyles.imageContainerDecoration, // 분리된 스타일 사용
               child:
                   _selectedImage != null
-                      ? Image.file(
-                        _selectedImage!,
-                        height: 300,
-                        fit: BoxFit.contain,
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.file(
+                          _selectedImage!,
+                          height: 300,
+                          fit: BoxFit.contain,
+                        ),
                       )
-                      : const Text('이미지를 선택해주세요'),
+                      : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_photo_alternate_outlined,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            '이미지를 선택해주세요',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+
+            // 이미지 선택 버튼들
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('갤러리에서 선택'),
+                    // theme에 이미 적용된 스타일 사용
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.camera),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('카메라로 촬영'),
+                    // theme에 이미 적용된 스타일 사용
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
 
             // 업로드 버튼
             ElevatedButton(
               onPressed: _isUploading ? null : _uploadImage,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-              ),
+              // theme에 이미 적용된 스타일 사용
               child:
                   _isUploading
-                      ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                          strokeWidth: 2.5,
+                        ),
                       )
-                      : const Text('업로드', style: TextStyle(fontSize: 18)),
+                      : const Text(
+                        '업로드',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 24),
 
             // 업로드 결과 메시지
             if (_uploadResult != null)
               Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: _hasError ? Colors.red[100] : Colors.green[100],
-                  borderRadius: BorderRadius.circular(4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
-                child: Text(
-                  _uploadResult!,
-                  style: TextStyle(
-                    color: _hasError ? Colors.red[900] : Colors.green[900],
-                  ),
+                decoration:
+                    _hasError
+                        ? ComponentStyles
+                            .errorMessageDecoration // 분리된 스타일 사용
+                        : ComponentStyles
+                            .successMessageDecoration, // 분리된 스타일 사용
+                child: Row(
+                  children: [
+                    Icon(
+                      _hasError
+                          ? Icons.error_outline
+                          : Icons.check_circle_outline,
+                      color: _hasError ? Colors.red[700] : Colors.green[700],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _uploadResult!,
+                        style: TextStyle(
+                          color:
+                              _hasError ? Colors.red[700] : Colors.green[700],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
           ],

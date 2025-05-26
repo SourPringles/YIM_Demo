@@ -49,7 +49,6 @@ class HttpConnection {
     request.files.add(await http.MultipartFile.fromPath('source', file.path));
 
     return await request.send().timeout(const Duration(seconds: 5));
-    ;
   }
 
   Future<List<Map<String, dynamic>>> getStorage() async {

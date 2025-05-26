@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/common_data_provider.dart';
+import '../theme/component_styles.dart'; // 테마 스타일 임포트
 import 'test_view.dart';
 import 'item_visual_view.dart';
 import 'item_list_view.dart';
@@ -27,9 +28,12 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('YIM Demo'),
+        elevation: 0, // 그림자 제거
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -53,10 +57,14 @@ class _MainViewState extends State<MainView> {
       // 조건부로 body 내용 결정
       body: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue, width: 1.0),
-          borderRadius: BorderRadius.circular(8.0),
+          // 테두리 스타일 업데이트
+          border: Border.all(
+            color: theme.primaryColor.withOpacity(0.2),
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        padding: const EdgeInsets.all(2.0),
+        margin: const EdgeInsets.all(4.0),
         child: _showTestViewer ? const TestView() : _pages[_currentIndex],
       ),
       bottomNavigationBar:
@@ -69,7 +77,9 @@ class _MainViewState extends State<MainView> {
                     _currentIndex = index;
                   });
                 },
-                items: [
+                selectedItemColor: theme.primaryColor, // 선택된 아이템 색상
+                unselectedItemColor: Colors.grey[600], // 선택되지 않은 아이템 색상
+                items: const [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.dashboard),
                     label: 'Visual View',
