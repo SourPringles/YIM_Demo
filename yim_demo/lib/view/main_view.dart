@@ -51,7 +51,14 @@ class _MainViewState extends State<MainView> {
         ],
       ),
       // 조건부로 body 내용 결정
-      body: _showTestViewer ? const TestView() : _pages[_currentIndex],
+      body: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue, width: 1.0),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        padding: const EdgeInsets.all(2.0),
+        child: _showTestViewer ? const TestView() : _pages[_currentIndex],
+      ),
       bottomNavigationBar:
           _showTestViewer
               ? null // TestViewer 표시 중일 때는 바텀 네비게이션 바 숨김(선택사항)
