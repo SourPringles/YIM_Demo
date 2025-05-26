@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../model/http_connection_model.dart';
 import '../model/storage_data_model.dart';
 import '../model/config_setting_model.dart';
+import '../notification/background_service.dart';
+import '../notification/notification_service.dart';
 //import '../model/compare_date_model.dart';
 
 class CommonDataProvider extends ChangeNotifier {
@@ -21,6 +23,9 @@ class CommonDataProvider extends ChangeNotifier {
     httpConnection.setLocalhost(configSetting.isLocalhost);
     httpConnection.setUrl(configSetting.url);
     httpConnection.setPort(configSetting.port);
+
+    // 백그라운드 서비스는 이제 main.dart에서 초기화하므로 제거
+    // await initializeBackgroundService();
 
     refreshData(); // 데이터 새로고침
   }
@@ -82,5 +87,33 @@ class CommonDataProvider extends ChangeNotifier {
   void resetAll() {
     httpConnection.get('reset');
     notifyListeners();
+  }
+
+  // 방치된 아이템 체크 (UI에서 직접 확인할 수 있는 메서드)
+  List<Map<String, dynamic>> checkAbandonedItems(Duration threshold) {
+    return storageData.getAbandonedItems(threshold);
+  }
+
+  // 수동으로 백그라운드 작업 즉시 실행 (필요한 경우)
+  Future<void> checkAbandonedItemsNow() async {
+    try {
+      final abandonedItems = storageData.getAbandonedItems(Duration(hours: 24));
+      final service = NotificationService();
+      await service.initialize();
+      await service.initialize();
+
+      for (var item in abandonedItems) {
+        final String uuid = item['uuid'] ?? 'unknown';
+        final String nickname = item['nickname'] ?? '알 수 없는 항목';
+
+        await service.showNotification(
+          id: uuid.hashCode,
+          title: '방치된 항목 알림',
+          body: '$nickname이(가) 24시간 이상 방치되었습니다.',
+        );
+      }
+    } catch (e) {
+      print('Error checking abandoned items: $e');
+    }
   }
 }

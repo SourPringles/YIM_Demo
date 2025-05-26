@@ -14,7 +14,9 @@ dependencies:
   ini: ^2.0.0
   shared_preferences: ^2.2.0
   path_provider: ^2.1.1
-  provider: ^6.1.5
+  provider: ^6.0.0
+  workmanager: ^0.5.1
+  flutter_local_notifications: ^16.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +25,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # 이 부분은 다음과 같이 구성할 수도 있습니다 (필요한 경우)
+  # assets:
+  #   - images/
+  #   - icons/
