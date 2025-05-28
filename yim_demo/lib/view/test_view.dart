@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../provider/common_data_provider.dart';
 import '../theme/component_styles.dart'; // 테마 스타일 임포트
 
+import '../model/notification_model.dart'; // 알림 모델 임포트
+
 class TestView extends StatefulWidget {
   const TestView({super.key});
 
@@ -404,21 +406,16 @@ class _TestViewState extends State<TestView> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        context.read<CommonDataProvider>().changeHttpConnection(
-                          false,
-                          'localhost',
-                          '5000',
+                        // CommonDataProvider에서 직접 알림 전송 메서드 호출
+                        context.read<CommonDataProvider>().sendTestNotification(
+                          'Test Notification',
+                          'This is a test notification from the debug page.',
                         );
-                        setState(() {
-                          ipController.text = 'localhost';
-                          portController.text = '5000';
-                          isLocalhost = false;
-                        });
                       },
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text("localhost"),
+                      child: const Text("noti"),
                     ),
                   ),
                 ],
