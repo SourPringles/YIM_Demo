@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../provider/common_data_provider.dart';
 import '../model/compare_date_model.dart';
+// ignore: unused_import
 import '../theme/component_styles.dart'; // 테마 스타일 임포트
 import 'item_detail_dialog.dart';
 
@@ -61,6 +64,7 @@ class ItemVisualView extends StatelessWidget {
                     );
                   }
                   final items = snapshot.data!;
+                  // ignore: unnecessary_null_comparison
                   final isLoading = items.isEmpty && bgImage == null;
 
                   if (isLoading) {

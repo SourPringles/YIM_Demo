@@ -28,12 +28,13 @@ class ConfigSetting {
         await saveConfig(); // 기본 설정을 파일로 저장
       }
     } catch (e) {
-      print('설정 로드 오류: $e');
+      //print('설정 로드 오류: $e');
       _configData = Map<String, dynamic>.from(_defaultConfig);
     }
   }
 
   // 깊은 복사를 위한 헬퍼 함수
+  // ignore: unused_element
   Map<String, dynamic> _deepCopy(Map<String, dynamic> original) {
     Map<String, dynamic> result = {};
     original.forEach((key, value) {
@@ -55,7 +56,7 @@ class ConfigSetting {
       final contents = _convertToIni(_configData);
       await file.writeAsString(contents);
     } catch (e) {
-      print('설정 저장 오류: $e');
+      //print('설정 저장 오류: $e');
     }
   }
 

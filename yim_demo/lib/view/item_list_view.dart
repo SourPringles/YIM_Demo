@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/common_data_provider.dart';
+// ignore: unused_import
 import '../theme/component_styles.dart'; // 테마 스타일 임포트
 import 'item_detail_dialog.dart'; // 다이얼로그 import 추가
 
@@ -102,6 +103,7 @@ class ItemListView extends StatelessWidget {
                             vertical: 8,
                           ),
                           leading: CircleAvatar(
+                            // ignore: deprecated_member_use
                             backgroundColor: theme.primaryColor.withOpacity(
                               0.1,
                             ),

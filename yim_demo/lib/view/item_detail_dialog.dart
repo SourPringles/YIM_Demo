@@ -120,7 +120,7 @@ class _ItemDetailDialogState extends State<ItemDetailDialog> {
                       try {
                         commonData.changeNickname(uuid, _nameController.text);
                       } catch (e) {
-                        print('Error changing nickname: $e');
+                        //print('Error changing nickname: $e');
                       }
                       widget.item['nickname'] = _nameController.text;
 
