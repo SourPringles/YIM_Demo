@@ -69,12 +69,12 @@ class HttpConnection {
           };
         }).toList();
       } else {
-        print('Failed to fetch storage: ${response.statusCode}');
+        //print('Failed to fetch storage: ${response.statusCode}');
         return [];
       }
     } catch (e) {
       // 오류 발생 시 타입 캐스팅 오류 등을 포함하여 출력
-      print('Error fetching storage: $e');
+      //print('Error fetching storage: $e');
       return [];
     }
   }
@@ -95,12 +95,12 @@ class HttpConnection {
           };
         }).toList();
       } else {
-        print('Failed to fetch Temp: ${response.statusCode}');
+        //print('Failed to fetch Temp: ${response.statusCode}');
         return [];
       }
     } catch (e) {
       // 오류 발생 시 타입 캐스팅 오류 등을 포함하여 출력
-      print('Error fetching storage: $e');
+      //print('Error fetching storage: $e');
       return [];
     }
   }
@@ -114,11 +114,11 @@ class HttpConnection {
         final bytes = response.bodyBytes;
         return Image.memory(bytes);
       } else {
-        print('Failed to fetch image: ${response.statusCode}');
+        //print('Failed to fetch image: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching image: $e');
+      //print('Error fetching image: $e');
       return null;
     }
   }

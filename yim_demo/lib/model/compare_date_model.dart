@@ -11,7 +11,7 @@ Duration compareDatesDuration(String timestamp) {
     // );
     return difference;
   } catch (e) {
-    print('Error calculating date difference: $e');
+    //print('Error calculating date difference: $e');
     return Duration.zero;
   }
 }

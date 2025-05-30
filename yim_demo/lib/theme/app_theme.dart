@@ -10,6 +10,7 @@ class AppTheme {
       seedColor: const Color(0xFF0064FF),
       primary: const Color(0xFF0064FF),
       secondary: const Color(0xFF3182F6),
+      // ignore: deprecated_member_use
       background: Colors.white,
       surface: Colors.white,
     ),

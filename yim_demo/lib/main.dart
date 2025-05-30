@@ -5,11 +5,13 @@ import 'view/main_view.dart';
 import 'provider/common_data_provider.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter 초기화
+
   try {
     runApp(const MainApp());
   } catch (e) {
-    print('Error: $e');
+    //print('Error: $e');
   }
 }
 

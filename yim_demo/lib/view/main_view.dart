@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/common_data_provider.dart';
+// ignore: unused_import
 import '../theme/component_styles.dart'; // 테마 스타일 임포트
 import 'test_view.dart';
 import 'item_visual_view.dart';

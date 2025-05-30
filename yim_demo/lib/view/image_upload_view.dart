@@ -108,6 +108,7 @@ class _ImageUploadViewState extends State<ImageUploadView> {
         _selectedImage!,
       );
 
+      // ignore: use_build_context_synchronously
       _hideLoadingDialog(context);
 
       if (response.statusCode == 200) {
