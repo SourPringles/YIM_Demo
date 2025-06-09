@@ -38,7 +38,7 @@ class HttpConnection {
     final url = getBaseUrl();
     return await http
         .get(Uri.parse('$url/$endpoint'))
-        .timeout(const Duration(seconds: 10));
+        .timeout(const Duration(seconds: 60 * 5));
   }
 
   Future<http.StreamedResponse> postFile(String endpoint, File file) async {
@@ -48,7 +48,7 @@ class HttpConnection {
     var request = http.MultipartRequest('POST', url);
     request.files.add(await http.MultipartFile.fromPath('source', file.path));
 
-    return await request.send().timeout(const Duration(seconds: 10));
+    return await request.send().timeout(const Duration(seconds: 60 * 5));
   }
 
   Future<List<Map<String, dynamic>>> getStorage() async {
