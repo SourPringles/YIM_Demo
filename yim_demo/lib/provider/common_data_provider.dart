@@ -38,7 +38,7 @@ class CommonDataProvider extends ChangeNotifier {
     // 방치된 항목이 있을 때만 알림 시작
     if (abandonedCount > 0) {
       _notificationService.startPeriodicNotifications(
-        intervalMinutes: 1,
+        intervalMinutes: 5, // 알림 주기 (5분)
         count: abandonedCount,
       );
       _notificationsActive = true;
