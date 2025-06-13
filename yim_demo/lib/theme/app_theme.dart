@@ -49,7 +49,7 @@ class AppTheme {
       ),
     ),
     // 카드 테마
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -67,6 +67,6 @@ class AppTheme {
       ),
     ),
     // 다이얼로그 테마
-    dialogTheme: DialogTheme(shape: ComponentStyles.dialogShape),
+    dialogTheme: DialogThemeData(shape: ComponentStyles.dialogShape),
   );
 }
