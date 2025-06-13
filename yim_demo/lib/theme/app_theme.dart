@@ -54,7 +54,7 @@ class AppTheme {
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
-    // 앱바 테마
+    // 앱 바 테마
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
       foregroundColor: Color(0xFF191F28),
